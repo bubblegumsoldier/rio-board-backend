@@ -40,6 +40,28 @@ module.exports = function(sequelize, Sequelize) {
         plan: {
             type: Sequelize.INTEGER,
             defaultValue: 0
+        },
+
+        deactivated: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
+        }
+    },{
+        indexes: [
+          // Create a unique index on email
+          {
+            unique: true,
+            fields: ['email']
+          }
+        ],
+        instanceMethods: {
+            toJSON: function () {
+                const userObj = Object.assign({}, this.dataValues);
+      
+                delete userObj.password;
+      
+                return userObj
+            }
         }
     });
  

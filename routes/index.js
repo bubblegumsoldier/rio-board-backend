@@ -12,12 +12,26 @@ router.post("/auth",
 // router.get("/users",
 //   authController.requiresValidToken,
 //   usersController.getAllUsers);
+router.post("/users",
+  usersController.createUser
+);
+
+router.put("/users/own",
+  authController.requiresValidToken,
+  usersController.updateUser
+);
+
+router.delete("/users/own",
+  authController.requiresValidToken,
+  usersController.deleteUser
+);
 
 router.get("/users/:userId",
   usersController.initializeUserId,
   authController.requiresValidToken,
   authController.requiresMatchingUserId,
   usersController.getUser);
+
 
 router.get("/users/:userId/projects",
   usersController.initializeUserId,
