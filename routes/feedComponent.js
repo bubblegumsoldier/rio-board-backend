@@ -1,6 +1,7 @@
 var models = require("../models");
 const FeedComponent = models.feedComponent;
 const Project = models.project;
+const FeedMessage = models.feedMessage;
 
 function getIncludeModels(req)
 {
@@ -32,21 +33,88 @@ module.exports = {
             res.send(error);
         });
     },
+
+    createFeedComponent:(req, res, next) => {
+        let userId = req.userId;
+        let projectId = req.projectId;
+        let body = req.body;
+        Project.findOne({where: {
+                userId: userId,
+                id: projectId
+            },
+            include: getIncludeModels(req)
+        }).then(project => {
+            project.createFeedComponent(body).then((result) => {
+                res.send(result);
+            }).catch(error => {
+                console.log(error);
+                res.send(error);
+            });
+        }).catch(error => {
+            console.log(error);
+            res.send(error);
+        });
+    },
+
     /* GET feedMessages. */
     getFeedMessages: (req, res, next) => {
         console.log("HERE!");
         let userId = req.userId;
         let projectId = req.projectId;
         console.log(req.projectId);
-            
+        let models = [];
+        models.push({model: FeedMessage})
         Project.findOne({where: {
-                userId: userId,
-                id: projectId
-            },
-            include: getIncludeModels(req)
+            userId: userId,
+            id: projectId
+        }
         }).then(result => {
-            console.log(result.feedComponent.feedMessages);
-            res.send(result.feedComponent.feedMessages);
+            //project is project of user.
+            //continue
+            FeedComponent.findOne({where: {
+                projectId: projectId
+            }, include: models
+            }).then((feedComponent) => {
+                res.send(feedComponent.feedMessages);
+            }).catch(error => {
+                console.log(error);
+                res.send(error);
+            });;
+        }).catch(error => {
+            console.log(error);
+            res.send(error);
+        });
+    },
+
+    addFeedMessage: (req, res, next) => {
+        console.log("FEED MESSAGE!");
+        let userId = req.userId;
+        let projectId = req.projectId;
+
+        let body = req.body;
+        body.userId = "STATIC"
+
+        Project.findOne({where: {
+            userId: userId,
+            id: projectId
+        }
+        }).then(result => {
+            //project is project of user.
+            //continue
+            FeedComponent.findOne({where: {
+                projectId: projectId
+            }
+            }).then((feedComponent) => {
+                feedComponent.createFeedMessage(body).then((result) => {
+                    res.send(result);
+                }).catch(error => {
+                    console.log(error);
+                    res.send(error);
+                });
+            }).catch(error => {
+                console.log(error);
+                res.send(error);
+            })
         }).catch(error => {
             console.log(error);
             res.send(error);
