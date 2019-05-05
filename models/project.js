@@ -29,6 +29,7 @@ module.exports = function(sequelize, Sequelize) {
     Project.hasOne(require("./feedComponent")(sequelize, Sequelize));
     Project.hasOne(require("./changeLogComponent")(sequelize, Sequelize));
     Project.hasOne(require("./progressComponent")(sequelize, Sequelize));
+    Project.hasOne(require("./passwordShareComponent")(sequelize, Sequelize));
 
     return Project;
 }

@@ -121,6 +121,23 @@ module.exports ={
             console.log(error);
             res.send(error);
         }); 
+    },
+
+    projectBelongsToUser: (req, res, next) => {
+        let userId = req.userId;
+        let projectId = req.userId;
+        Project.findOne({where: {
+            userId: userId,
+            id: projectId
+        }}).then(result => {
+            if(result)
+            {
+                return next();
+            }
+            res.status(404).json({message: "Project for user could not be found"});
+        }).catch((e) => {
+            res.status(404).json({message: "Project for user could not be found"});
+        })
     }
 }
 

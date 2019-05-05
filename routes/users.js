@@ -68,7 +68,14 @@ module.exports = {
 
   createUser: (req, res, next) => {
     let body = req.body;
-    body.password = md5(body.password);
+    if("password" in body)
+    {
+      if(!validatePassword(body.password))
+      {
+        return res.status(300).json({message: "Invalid Password"});
+      }
+      body.password = md5(body.password);
+    }
     User.findOne({where: {email: body.email}, attributes: ["id"]}).then((user) => {
       if(user)
       {
@@ -78,11 +85,19 @@ module.exports = {
         let rawUser = user.get({plain: true});
         delete rawUser.password;
         res.send(rawUser);
-      }).catch(_ => {
+      }).catch(e => {
+        console.log(e);
         res.status(500).json({message: "An error occurred"});
-      })
-    }).catch(_ => {
-      res.status(500).json({message: "An error occurred"});
+      });
+    }).catch(e => {
+      createUserNoCheck(body).then((user) => {
+        let rawUser = user.get({plain: true});
+        delete rawUser.password;
+        res.send(rawUser);
+      }).catch(e => {
+        console.log(e);
+        res.status(500).json({message: "An error occurred"});
+      });
     });
   },
 
