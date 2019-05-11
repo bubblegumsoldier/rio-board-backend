@@ -20,6 +20,11 @@ router.put("/users/own",
   usersController.updateUser
 );
 
+router.get("/users/own",
+  authController.requiresValidToken,
+  usersController.getCurrentUser
+);
+
 router.delete("/users/own",
   authController.requiresValidToken,
   usersController.deleteUser

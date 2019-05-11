@@ -17,10 +17,6 @@ module.exports = function(sequelize, Sequelize) {
             notEmpty: true
         },
  
-        about: {
-            type: Sequelize.TEXT
-        },
- 
         email: {
             type: Sequelize.STRING,
             validate: {
@@ -44,6 +40,11 @@ module.exports = function(sequelize, Sequelize) {
 
         deactivated: {
             type: Sequelize.BOOLEAN,
+            defaultValue: false
+        },
+
+        image: {
+            type: Sequelize.STRING,
             defaultValue: false
         }
     },{

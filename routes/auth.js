@@ -77,6 +77,8 @@ module.exports = {
             User.findByPk(user.id).then(fullUser => {
                 fullUser.update({
                     lastLogin: sequelize.fn('NOW')
+                }, {
+                    include: [{ all: true, nested: true }]
                 }).then(newUser => {
                     req.login(user, {session: false}, (err) => {
                         if (err) {
@@ -84,13 +86,14 @@ module.exports = {
                         }
                         // generate a signed son web token with the contents of user object and return it in the response
                         const token = jwt.sign(user, jwtSecret);
+                        user.token = token;
                         
                      
-                         return res.json({user, token});
+                         return res.json(user);
                     });
                 }).catch(e => {
                     console.log(e);
-                    return res.status(400).json({
+                    return res.status(401).json({
                         message: e,
                         user   : user
                     });

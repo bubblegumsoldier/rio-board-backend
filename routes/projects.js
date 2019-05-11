@@ -58,6 +58,11 @@ module.exports ={
             },
             include: getIncludeModels(req)
         }).then(result => {
+        if("passwordShareComponent" in result)
+        {
+            delete result.passwordShareComponent.password;
+            delete result.passwordShareComponent.encryptedText;
+        }
         console.log(result);
         res.send(result);
         }).catch(error => {
@@ -71,6 +76,7 @@ module.exports ={
         let userId = req.userId;
         
         User.findByPk(req.userId).then(user => {
+            console.log(body);
             body.securityToken = generateSecurityToken();
             user.createProject(body).then(result => {
                 console.log(result);

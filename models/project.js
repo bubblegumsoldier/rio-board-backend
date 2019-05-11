@@ -5,9 +5,13 @@ module.exports = function(sequelize, Sequelize) {
             type: Sequelize.STRING,
             allowNull: false
         },
+        description: {
+            type: Sequelize.TEXT,
+            allowNull: true
+        },
         image: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         securityToken: {
             type: Sequelize.STRING,

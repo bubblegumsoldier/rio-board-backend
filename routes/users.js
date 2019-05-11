@@ -66,6 +66,18 @@ module.exports = {
     });
   },
 
+  getCurrentUser: (req, res, next) => {
+    let userId = req.user.id;
+    User.findByPk(userId, {
+      include: getIncludeModels(req),
+      attributes: { exclude: ['password'] }
+    }).then(result => {
+      res.send(result);
+    }).catch(error => {
+      res.send(error);
+    });
+  },
+
   createUser: (req, res, next) => {
     let body = req.body;
     if("password" in body)
@@ -103,24 +115,32 @@ module.exports = {
 
   updateUser: (req, res, next) => {
     let body = req.body;
+    let additionalWhere = {};
     if("password" in body)
     {
       if(!validatePassword(body.password))
       {
-        return res.status(300).json({message: "Invalid Password"});
+        return res.status(300).json({message: "Password doesn't match minimal security requirements."});
       }
       body.password = md5(body.password);
+      body.currentPassword = md5(body.currentPassword);
+      additionalWhere["password"] = body.currentPassword;
     }
     User.update(body, {
       where: {
-        id: req.user.id
+        id: req.user.id,
+        ...additionalWhere
       }
     }).then((user) => {
+      if(!user)
+      {
+        return res.status(400).json({message: "Current password is not correct."});
+      }
       res.json({message: "Successfully updated user"});
     }).catch((e) => {
       if(e.name == "SequelizeUniqueConstraintError")
       {
-        return res.status(401).json({message: "email address already in use"});
+        return res.status(403).json({message: "Email address is already in use."});
       }
       console.log(e);
       res.status(500).json({message: "An error occurred"});

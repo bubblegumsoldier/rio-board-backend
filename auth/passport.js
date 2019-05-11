@@ -10,7 +10,7 @@ const ExtractJWT = passportJWT.ExtractJwt;
 var md5 = require('md5');
 
 passport.use(new LocalStrategy({
-        usernameField: 'email',
+        usernameField: 'username',
         passwordField: 'password'
     }, 
     function (email, password, cb) {
