@@ -110,5 +110,19 @@ module.exports = {
             console.log(e);
             res.status(500).send("An internal server error has occurred");
         });
+    },
+
+    deletePasswordShareComponent: function(req, res)
+    {
+        let projectId = req.projectId;
+        PasswordShareComponent.destroy({
+            where: {
+                projectId: projectId
+            }
+        }).then(_ => {
+            res.status(200).json({message: "Successfully deleted password share."});
+        }).catch(_ => {
+            res.status(404);
+        });
     }
 }

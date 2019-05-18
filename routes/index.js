@@ -134,4 +134,11 @@ router.put("/users/:userId/projects/:projectId/passwordShareComponent",
   projectsController.projectBelongsToUser,
   passwordShareComponentController.updatePasswordShareComponent);
 
+router.delete("/users/:userId/projects/:projectId/passwordShareComponent",
+  usersController.initializeUserId,
+  projectsController.initializeProjectId,
+  authController.requiresValidProjectAccess("write"),
+  projectsController.projectBelongsToUser,
+  passwordShareComponentController.deletePasswordShareComponent);
+
 module.exports = router;

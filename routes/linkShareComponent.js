@@ -45,8 +45,18 @@ module.exports = {
             {
                 return res.status(404);
             }
-            project.createLinkShareComponent(body).then((result) => {
-                res.send(result);
+            LinkShareComponent.destroy({
+                where:
+                {
+                    projectId: projectId
+                }
+            }).then(_ => {
+                project.createLinkShareComponent(body).then((result) => {
+                    res.send(result);
+                }).catch(error => {
+                    console.log(error);
+                    res.send(error);
+                });
             }).catch(error => {
                 console.log(error);
                 res.send(error);
