@@ -97,6 +97,20 @@ router.get("/users/:userId/projects/:projectId/linkShareComponent",
   projectsController.projectBelongsToUser,
   linkShareComponentController.getLinkShareComponent);
 
+router.post("/users/:userId/projects/:projectId/linkShareComponent",
+  usersController.initializeUserId,
+  projectsController.initializeProjectId,
+  authController.requiresValidProjectAccess("write"),
+  projectsController.projectBelongsToUser,
+  linkShareComponentController.createLinkShareComponent);
+
+router.put("/users/:userId/projects/:projectId/linkShareComponent",
+  usersController.initializeUserId,
+  projectsController.initializeProjectId,
+  authController.requiresValidProjectAccess("write"),
+  projectsController.projectBelongsToUser,
+  linkShareComponentController.updateLinkShareComponent);
+
   //requires query param "password" (= SHA-1 encrypted password)
 router.get("/users/:userId/projects/:projectId/passwordShareComponent",
   usersController.initializeUserId,

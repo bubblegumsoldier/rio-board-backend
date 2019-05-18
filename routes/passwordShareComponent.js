@@ -1,5 +1,8 @@
 const PasswordShareComponent = require("../models").passwordShareComponent;
 const Project = require("../models").project;
+var sequelize = require("sequelize");
+var Op = sequelize.Op;
+
 
 function getIncludeModels(req)
 {
@@ -17,18 +20,45 @@ module.exports = {
         let hashedPassword = req.query.password;
         let projectId = req.projectId;
 
-        PasswordShareComponent.findOne({
-            where:
-            {
-                projectId: projectId,
+        let where = {
+            projectId: projectId
+        };
+        if(!hashedPassword)
+        {
+            where["password"] = "";
+        }else
+        {
+            where[Op.or] = [{
                 password: hashedPassword
+            },
+            {
+                password: ""
             }
+            ];
+        }
+
+        PasswordShareComponent.findOne({
+            where: where
         }).then((share) => {
             if(!share)
             {
                 return res.status(404).json({
                     message: "Couldn't be found"
                 });
+            }
+            if(share.password === "")
+            {
+                PasswordShareComponent.update({
+                    password: hashedPassword
+                }, {where: where}).then(updatedShare => {
+                    return res.status(200).json(share);
+                }).catch(e => {
+                    console.log(e);
+                    return res.status(404).json({
+                        message: "Couldn't be found"
+                    });
+                });
+                return;
             }
             return res.status(200).json(share);
         }).catch(e => {
@@ -50,6 +80,10 @@ module.exports = {
             },
             include: getIncludeModels(req)
         }).then(project => {
+            if(!project)
+            {
+                return res.status(404);
+            }
             project.createPasswordShareComponent(body).then((result) => {
                 res.send(result);
             }).catch(error => {
@@ -66,6 +100,7 @@ module.exports = {
     {
         let projectId = req.projectId;
         let body = req.body;
+        console.log(body);
         PasswordShareComponent.update(body, {where: {
             projectId: projectId,
             password: req.query.password

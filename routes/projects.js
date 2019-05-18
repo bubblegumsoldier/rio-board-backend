@@ -58,10 +58,16 @@ module.exports ={
             },
             include: getIncludeModels(req)
         }).then(result => {
-        if("passwordShareComponent" in result)
+        if("passwordShareComponent" in result && result.passwordShareComponent != null)
         {
-            delete result.passwordShareComponent.password;
-            delete result.passwordShareComponent.encryptedText;
+            if("password" in result.passwordShareComponent)
+            {
+                result.passwordShareComponent.password = "";
+            }
+            if("encryptedText" in result.passwordShareComponent)
+            {
+                result.passwordShareComponent.encryptedText = "";
+            }
         }
         console.log(result);
         res.send(result);
