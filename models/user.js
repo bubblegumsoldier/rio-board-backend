@@ -1,38 +1,40 @@
+const uuid = require('uuid/v4'); // ES5
+
 module.exports = function(sequelize, Sequelize) {
- 
+
     var User = sequelize.define('user', {
         id: {
-            autoIncrement: true,
+            allowNull: false,
             primaryKey: true,
-            type: Sequelize.INTEGER
+            type: Sequelize.UUID,
+            defaultValue: uuid()
         },
- 
         firstname: {
             type: Sequelize.STRING,
             notEmpty: true
         },
- 
+
         lastname: {
             type: Sequelize.STRING,
             notEmpty: true
         },
- 
+
         email: {
             type: Sequelize.STRING,
             validate: {
                 isEmail: true
             }
         },
- 
+
         password: {
             type: Sequelize.STRING,
             allowNull: false
         },
- 
+
         lastLogin: {
             type: Sequelize.DATE
         },
- 
+
         plan: {
             type: Sequelize.INTEGER,
             defaultValue: 0
@@ -58,14 +60,14 @@ module.exports = function(sequelize, Sequelize) {
         instanceMethods: {
             toJSON: function () {
                 const userObj = Object.assign({}, this.dataValues);
-      
+
                 delete userObj.password;
-      
+
                 return userObj
             }
         }
     });
- 
+
     User.hasMany(require("./project")(sequelize, Sequelize));
     require("./project")(sequelize, Sequelize).belongsTo(User);
 

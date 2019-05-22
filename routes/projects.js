@@ -137,7 +137,7 @@ module.exports ={
 
     projectBelongsToUser: (req, res, next) => {
         let userId = req.userId;
-        let projectId = req.userId;
+        let projectId = req.params.projectId;
         Project.findOne({where: {
             userId: userId,
             id: projectId

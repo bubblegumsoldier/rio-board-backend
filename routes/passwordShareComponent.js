@@ -37,6 +37,8 @@ module.exports = {
             ];
         }
 
+        console.log(where);
+
         PasswordShareComponent.findOne({
             where: where
         }).then((share) => {

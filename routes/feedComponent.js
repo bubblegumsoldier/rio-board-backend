@@ -19,7 +19,7 @@ module.exports = {
         let userId = req.userId;
         let projectId = req.projectId;
         console.log(projectId);
-            
+
         Project.findOne({where: {
                 userId: userId,
                 id: projectId
@@ -92,32 +92,52 @@ module.exports = {
         let projectId = req.projectId;
 
         let body = req.body;
-        body.userId = "STATIC"
-
-        Project.findOne({where: {
-            userId: userId,
-            id: projectId
+        if(!req.user)
+        {
+          body.userId = -1;
         }
-        }).then(result => {
-            //project is project of user.
-            //continue
-            FeedComponent.findOne({where: {
-                projectId: projectId
-            }
-            }).then((feedComponent) => {
-                feedComponent.createFeedMessage(body).then((result) => {
-                    res.send(result);
-                }).catch(error => {
-                    console.log(error);
-                    res.send(error);
-                });
+
+        FeedComponent.findOne({where: {
+            projectId: projectId
+        }
+        }).then((feedComponent) => {
+            feedComponent.createFeedMessage(body).then((result) => {
+                res.send(result);
             }).catch(error => {
                 console.log(error);
                 res.send(error);
-            })
+            });
         }).catch(error => {
             console.log(error);
             res.send(error);
         });
+    },
+
+    deleteFeedMessage: (req, res, next) => {
+      let userId = req.userId;
+      let projectId = req.projectId;
+      let feedMessageId = req.feedMessageId;
+
+      FeedComponent.findOne({where: {
+          projectId: projectId
+      }
+      }).then((feedComponent) => {
+        FeedMessage.update({
+          deleted: true
+        }, {
+          where: {
+            feedComponentId: feedComponent.id,
+            id: feedMessageId
+          }
+        }).then(_ => {
+          res.status(200).json({message: "Successfully deleted feed message"});
+        }).catch(e => {
+          console.log(error);
+          res.send(error);
+        });
+      }).catch(error => {
+          console.log(error);
+          res.send(error);
+      });;
     }
 };

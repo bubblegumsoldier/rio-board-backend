@@ -1,5 +1,5 @@
 module.exports = function(sequelize, Sequelize) {
-    
+
     var PasswordShareComponent = sequelize.define('passwordShareComponent', {
         ...require("./dashboardComponent.abstract")(sequelize, Sequelize),
         password: {
@@ -10,7 +10,7 @@ module.exports = function(sequelize, Sequelize) {
         encryptedText: {
             //encrypted with AES, KEY = SHA-2(PASSWORD)
             //decryption: AES(encryptedText, SHA-2(KEY))
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
             allowNull: false
         }
     });

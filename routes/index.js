@@ -2,6 +2,7 @@ var usersController = require("./users");
 var projectsController = require("./projects");
 var feedComponentController = require("./feedComponent");
 var linkShareComponentController = require("./linkShareComponent");
+var progressComponentController = require("./progressComponent");
 var passwordShareComponentController = require("./passwordShareComponent");
 var authController = require("./auth")
 
@@ -70,25 +71,36 @@ router.get("/users/:userId/projects/:projectId/feedComponent",
   usersController.initializeUserId,
   projectsController.initializeProjectId,
   authController.requiresValidProjectAccess("read"),
+  projectsController.projectBelongsToUser,
   feedComponentController.getFeedComponent);
 
 router.post("/users/:userId/projects/:projectId/feedComponent",
   usersController.initializeUserId,
   projectsController.initializeProjectId,
   authController.requiresValidProjectAccess("write"),
+  projectsController.projectBelongsToUser,
   feedComponentController.createFeedComponent);
 
 router.get("/users/:userId/projects/:projectId/feedComponent/feedMessages",
   usersController.initializeUserId,
   projectsController.initializeProjectId,
   authController.requiresValidProjectAccess("read"),
+  projectsController.projectBelongsToUser,
   feedComponentController.getFeedMessages);
 
 router.post("/users/:userId/projects/:projectId/feedComponent/feedMessages",
   usersController.initializeUserId,
   projectsController.initializeProjectId,
-  authController.requiresValidProjectAccess("write"),
+  authController.requiresValidProjectAccess("read"), //everybody visitng the site should be allowed to post into the feed!
+  projectsController.projectBelongsToUser,
   feedComponentController.addFeedMessage);
+
+router.delete("/users/:userId/projects/:projectId/feedComponent/feedMessages/:feedMessageId",
+  usersController.initializeUserId,
+  projectsController.initializeProjectId,
+  authController.requiresValidProjectAccess("write"), //only users with write permission may delete... but they may delete everybodies messages
+  projectsController.projectBelongsToUser,
+  feedComponentController.deleteFeedMessage);
 
 router.get("/users/:userId/projects/:projectId/linkShareComponent",
   usersController.initializeUserId,
@@ -110,6 +122,27 @@ router.put("/users/:userId/projects/:projectId/linkShareComponent",
   authController.requiresValidProjectAccess("write"),
   projectsController.projectBelongsToUser,
   linkShareComponentController.updateLinkShareComponent);
+
+router.get("/users/:userId/projects/:projectId/progressComponent",
+  usersController.initializeUserId,
+  projectsController.initializeProjectId,
+  authController.requiresValidProjectAccess("read"),
+  projectsController.projectBelongsToUser,
+  progressComponentController.getProgressComponent);
+
+router.post("/users/:userId/projects/:projectId/progressComponent",
+  usersController.initializeUserId,
+  projectsController.initializeProjectId,
+  authController.requiresValidProjectAccess("write"),
+  projectsController.projectBelongsToUser,
+  progressComponentController.createProgressComponent);
+
+router.put("/users/:userId/projects/:projectId/progressComponent",
+  usersController.initializeUserId,
+  projectsController.initializeProjectId,
+  authController.requiresValidProjectAccess("write"),
+  projectsController.projectBelongsToUser,
+  progressComponentController.updateProgressComponent);
 
   //requires query param "password" (= SHA-1 encrypted password)
 router.get("/users/:userId/projects/:projectId/passwordShareComponent",
