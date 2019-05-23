@@ -55,7 +55,7 @@ module.exports = {
 
   getUser: (req, res, next) => {
     let userId = req.userId;
-  
+
     User.findByPk(userId, {
       include: getIncludeModels(req),
       attributes: { exclude: ['password'] }
@@ -63,6 +63,22 @@ module.exports = {
       res.send(result);
     }).catch(error => {
       res.send(error);
+    });
+  },
+
+  getUserName: (req, res, next) => {
+    let userId = req.userId;
+  
+    User.findByPk(userId, {
+      include: getIncludeModels(req),
+      attributes: { exclude: ['password'] }
+    }).then(result => {
+      res.send({
+        firstName: result.firstname,
+        lastName: result.lastname
+      });
+    }).catch(error => {
+      res.status(404).send(error);
     });
   },
 

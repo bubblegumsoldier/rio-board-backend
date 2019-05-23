@@ -37,6 +37,10 @@ router.get("/users/:userId",
   authController.requiresMatchingUserId,
   usersController.getUser);
 
+router.get("/users/:userId/name",
+  usersController.initializeUserId,
+  usersController.getUserName);
+
 router.get("/users/:userId/projects",
   usersController.initializeUserId,
   authController.requiresValidToken,

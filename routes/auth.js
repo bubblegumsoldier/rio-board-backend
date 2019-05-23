@@ -127,7 +127,7 @@ module.exports = {
                 }
                 if(!user)
                 {
-                    res.status(401).send({message: "Insufficient rights (2)"});
+                    return res.status(401).send({message: "Insufficient rights (2)"});
                 }
                 accessingUserIsProjectOwner(user, projectId).then(() => {next()}).catch(() => {{
                     res.status(401).send({message: "Insufficient rights (3)"});
