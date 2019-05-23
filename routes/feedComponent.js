@@ -92,31 +92,38 @@ module.exports = {
         let projectId = req.projectId;
 
         let body = req.body;
+        delete body.id;
         if(!req.user)
         {
+          console.log("no requesting user found");
+          console.log(req.user);
           body.userId = -1;
+        }else {
+          console.log(req.user);
+          body.userId = req.user.id;
         }
 
         FeedComponent.findOne({where: {
             projectId: projectId
         }
         }).then((feedComponent) => {
+          console.log(body);
             feedComponent.createFeedMessage(body).then((result) => {
                 res.send(result);
             }).catch(error => {
                 console.log(error);
-                res.send(error);
+                res.status(500).send(error);
             });
         }).catch(error => {
             console.log(error);
-            res.send(error);
+            res.status(500).send(error);
         });
     },
 
     deleteFeedMessage: (req, res, next) => {
       let userId = req.userId;
       let projectId = req.projectId;
-      let feedMessageId = req.feedMessageId;
+      let feedMessageId = req.params.feedMessageId;
 
       FeedComponent.findOne({where: {
           projectId: projectId
@@ -132,8 +139,8 @@ module.exports = {
         }).then(_ => {
           res.status(200).json({message: "Successfully deleted feed message"});
         }).catch(e => {
-          console.log(error);
-          res.send(error);
+          console.log(e);
+          res.send(e);
         });
       }).catch(error => {
           console.log(error);

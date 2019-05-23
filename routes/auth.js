@@ -8,7 +8,7 @@ var Project = require("../models").project;
 var sequelize = require("sequelize");
 var Op = sequelize.Op;
 
-function publicProjectKeyIsValid(projectId, key, readOrWrite = "read") 
+function publicProjectKeyIsValid(projectId, key, readOrWrite = "read")
 {
     let necessaryValue = (readOrWrite === "read") ? 1 : 2;
     console.log({where: {
@@ -87,8 +87,8 @@ module.exports = {
                         // generate a signed son web token with the contents of user object and return it in the response
                         const token = jwt.sign(user, jwtSecret);
                         user.token = token;
-                        
-                     
+
+
                          return res.json(user);
                     });
                 }).catch(e => {
@@ -104,18 +104,19 @@ module.exports = {
                     user   : user
                 });
             });
-           
+
         })(req, res);
     },
 
     requiresValidToken: passport.authenticate('jwt', {session: false}),
 
     requiresValidProjectAccess: (accessType = "write") => {
-        return (req, res, next) => 
+        return (req, res, next) =>
         {
             console.log("trying passport");
             passport.authenticate('jwt', {session: false}, function(err, user, info){
                 console.log("authenticated");
+                req.user = user;
                 let projectId = req.projectId;
                 let key = req.query.PPK;
                 if(key)
