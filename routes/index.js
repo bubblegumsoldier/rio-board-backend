@@ -4,7 +4,7 @@ var feedComponentController = require("./feedComponent");
 var linkShareComponentController = require("./linkShareComponent");
 var progressComponentController = require("./progressComponent");
 var passwordShareComponentController = require("./passwordShareComponent");
-var authController = require("./auth")
+var authController = require("./auth");
 
 var router = require("express").Router();
 

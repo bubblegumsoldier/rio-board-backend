@@ -44,12 +44,20 @@ module.exports = {
             },
             include: getIncludeModels(req)
         }).then(project => {
+          FeedComponent.destroy({
+            where: {
+              projectId: projectId
+            }
+          }).then(_ => {
             project.createFeedComponent(body).then((result) => {
                 res.send(result);
             }).catch(error => {
                 console.log(error);
                 res.send(error);
             });
+          }).catch(e => {
+            res.status(500).send(e);
+          });
         }).catch(error => {
             console.log(error);
             res.send(error);

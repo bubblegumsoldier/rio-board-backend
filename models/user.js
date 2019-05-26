@@ -71,5 +71,6 @@ module.exports = function(sequelize, Sequelize) {
     User.hasMany(require("./project")(sequelize, Sequelize));
     require("./project")(sequelize, Sequelize).belongsTo(User);
 
+
     return User;
 }
